@@ -1,0 +1,62 @@
+#cloud-config
+package_update: true
+package_upgrade: false
+
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+groups:
+  - docker
+system_info:
+  default_user:    
+    groups: [ docker ]
+
+packages:
+  - curl
+  - tar
+  - apt-transport-https
+  - ca-certificates
+  - jq
+  - gnupg-agent
+  - software-properties-common
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+write_files:
+  - path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
+    content: |
+      net.ipv4.conf.all.forwarding=1
+  - path: /home/ubuntu/created-by-cloud-init.txt
+    owner: ubuntu:ubuntu
+    permissions: 0o770
+    defer: true
+    content: |
+      Lorem ipsum odor amet, consectetuer adipiscing elit.
+  - path: /tmp/create-runner.sh
+    content: |
+      #!/bin/bash
+      cd /actions-runner
+      curl -o actions-runner-linux-x64-2.321.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-linux-x64-2.321.0.tar.gz
+      tar xzf actions-runner-linux-x64-2.321.0.tar.gz
+      TOKEN=$(curl -s -X POST -H "Authorization: token <redacted>" https://api.github.com/repos/laathm/ga-test/actions/runners/registration-token | jq -r .token)
+      ./config.sh --url https://github.com/laathm/ga-test --token $TOKEN --unattended --replace      
+      rm actions-runner-linux-x64-2.321.0.tar.gz    
+    owner: "ubuntu"
+    permissions: 0o777
+    defer: true
+# https://stackoverflow.com/questions/74556707/how-to-set-and-use-variables-in-cloud-init
+runcmd:
+  - iptables -P INPUT ACCEPT
+  - iptables -P FORWARD ACCEPT
+  - iptables -P OUTPUT ACCEPT
+  - mkdir /actions-runner
+  - [ chown, "ubuntu:ubuntu", /actions-runner ]
+  - sudo -u ubuntu bash /tmp/create-runner.sh
+  - cd /actions-runner
+  - ./svc.sh install
+  - ./svc.sh start
