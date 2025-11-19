@@ -75,6 +75,6 @@ output "create_dispatch_event" {
   value = <<-EOT
           #!/usr/bin/env bash
           # create dispatch event for Github actions workflow 
-          curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer <redacted>" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/laathm/ga-test/actions/workflows/140544536/dispatches -d '{"ref":"main"}'
+          curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer <gh_pat>" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/Banana-Aviation/DemoProject/actions/workflows/208478659/dispatches -d '{"ref":"main"}'
           EOT
 }

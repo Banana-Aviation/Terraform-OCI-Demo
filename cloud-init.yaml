@@ -1,4 +1,7 @@
 #cloud-config
+
+# For the reference - how to use raw yaml cloudinit
+# The better way is to use hashicorp/cloudinit provider
 package_update: true
 package_upgrade: false
 

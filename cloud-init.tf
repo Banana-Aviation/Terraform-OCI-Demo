@@ -73,7 +73,8 @@ data "cloudinit_config" "instance_config" {
         "cd /actions-runner",
         "./svc.sh install",
         "./svc.sh start",
-        # curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer <redacted>" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/laathm/ga-test/actions/workflows/140544536/dispatches -d '{"ref":"main"}'"
+        # Uncomment next line to launch github action and deploy actual application on the host
+        # curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer <redacted>" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos//actions/workflows/140544536/dispatches -d '{"ref":"main"}'"
       ]
     })
   }
